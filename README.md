@@ -7,3 +7,9 @@ _I advise not to use it in its current form_, as things are still being finalise
 If you want to test it out, you can hit me up on Discord: @Sant268#1878
 
 peace <3 (surely I need to make this ReadMe more, **professional** later on) 
+
+In it's current scuffed form, it uses:
+- Fullcalendar (not premium) mainly for it's basic organization of the calendar, and Timezone support
+- Bootswatch Theme for _Dark Mode_
+- A **lot** of JQuery Modification to inject content by manual params
+- Google Calendar as a source for Data (Events) Entry
