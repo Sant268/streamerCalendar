@@ -361,11 +361,5 @@ document.addEventListener('DOMContentLoaded', function () {
     }`;
     document.body.appendChild(sheet);
   }
-
-
-  else {
-    let pushNotifAreaEl = document.getElementById('push-notif-area');
-    pushNotifAreaEl.style.display = 'none';
-  }
   
 });
