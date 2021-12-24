@@ -122,6 +122,8 @@ document.addEventListener('DOMContentLoaded', function () {
     return eventObjs;
   };
 
+  const lastView = localStorage.getItem( 'lastView' );
+
   var timeZoneSelectorEl = document.getElementById('time-zone-selector');
   var loadingEl = document.getElementById('loading');
   var calendarEl = document.getElementById('calendar');
@@ -130,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function () {
     themeSystem: "bootstrap",
     contentHeight: "auto",
     firstDay : 1,
-    initialView: 'listWeek',
+    initialView: lastView ? lastView : 'listWeek',
     views:
     {
       listWeek:
@@ -140,8 +142,17 @@ document.addEventListener('DOMContentLoaded', function () {
     },
     googleCalendarApiKey: config.googleCalendarApiKey, //gcal api here
     // timeZone: initialTimeZone,
+    customButtons: {
+      reload: {
+        text: 'Refresh Events',
+        bootstrapFontAwesome: 'fa-refresh',
+        click: function() {
+          reloadCalendarEvents()
+        }
+      }
+    },
     headerToolbar: {
-      left: 'prev,next today',
+      left: 'prev,next today reload',
       center: 'title',
       right: 'listWeek,timeGridWeek,timeGridDay' //listWeek,timeGridWeek,timeGridDay,
     },
@@ -254,6 +265,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
     },
+    datesSet: function ( dateInfo ) {
+      localStorage.setItem( "lastView", dateInfo.view.type );
+    },
+    viewDidMount: function ( arg ) {
+      localStorage.setItem( "lastView", arg.view.type );
+    },
     viewWillUnmount: function () {
 
     },
@@ -261,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (arg.view.type === 'listWeek' ) {
         var tableHeader = arg.el;
         var defaultColumns = 3; //default, including the reference dot
-        var extraColumnHeaders = ['Topic', 'ETA(local)', 'Stream'];
+        var extraColumnHeaders = ['Topic', 'ETA (local)', 'Stream'];
         //columns I need
         var maxCol = defaultColumns + extraColumnHeaders.length;
         //total columns
@@ -342,6 +359,7 @@ document.addEventListener('DOMContentLoaded', function () {
         button.setAttribute("class", "btn btn-info");
         button.setAttribute("id", buttonId );
         button.innerHTML = buttonText;
+        toggleButtonsArea.appendChild( document.createTextNode(' ') );
         toggleButtonsArea.appendChild( button );
   
         $("#" + buttonId).click(function () {
@@ -420,4 +438,10 @@ document.addEventListener('DOMContentLoaded', function () {
   if (window.matchMedia("(orientation: portrait)").matches) {
     calendar.setOption('slotDuration', "00:15:00");
   }
+
+  // Periodically reload the calendar
+  const CALENDAR_RELOAD_MINUTES = 5;
+  setInterval( function () {
+    reloadCalendarEvents();
+  }, 60000 * CALENDAR_RELOAD_MINUTES );
 });
