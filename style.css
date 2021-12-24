@@ -77,6 +77,11 @@ also adding darkmode
   color: #000;
 }
 
-footer{
+footer {
 	height: 30px;
+  color: #0f0f0f;
+}
+
+footer a {
+  color: #2B3E50;
 }
