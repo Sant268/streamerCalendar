@@ -4,13 +4,19 @@ body {
   font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
   font-size: 14px;
 }
-
 th {
 	background: #2B3E50 !important;
 	pointer-events: none;
 }
 .fc-list-event-time {
 	align-self: center;
+}
+.fc-list-day-cushion {
+    background-color: transparent !important; 
+}
+.fc .fc-list-sticky .fc-list-day > * {
+  background-color: #0f0f0f !important;
+  z-index: 1; /* Fix events appearing on top of day headers in list view in Firefox */
 }
 tr:hover {
     background-color: transparent !important;

@@ -10,24 +10,23 @@
 		<title>Stream Calendar</title><!-- This is just a placeholder; title is dynamically updated by JS -->
 	</head>
 
-	<body>
+	<body class="bg-light">
 		<div id="google_translate_element"></div>
 		<div style="min-width: 100%;" class="pos-f-t">
 			<div class="collapse" id="navbarToggleExternalContent">
-				<div class="bg-dark p-4">
-					<div style='float:left'>
-						<span style="font-weight: bold; color:black">Timezone:</span>
-						<select class="btn btn-primary dropdown-toggle" id='time-zone-selector'>
-							<option value='local' selected>local</option>
-							<option value='UTC'>UTC</option>
+				<div class="bg-light p-4">
+					<div style="float:left">
+						<span style="font-weight: bold; color:whitesmoke">Timezone:</span>
+						<select class="btn btn-primary dropdown-toggle" id="time-zone-selector">
+							<option value="local" selected>local</option>
+							<option value="UTC">UTC</option>
 						</select>
 						<span id="calendar-toggle-buttons"></span>
 						<button id="12hr" type="button" class="btn btn-info">Switch to 12hr</button>
 						<button id="clrs" type="button" class="btn btn-danger">Restore Default Settings</button>
-						<div id="push-notif-area" class="optin-types optin-customization"><button id="push-notif-button" class="custom-button btn btn-info">Subscribe to Notifications</button></div>
 					</div>
 					
-					<div style='clear:both'></div>
+					<div style="clear:both"></div>
 				</div>
 			</div>
 			<nav class="navbar navbar-dark bg-dark">
@@ -44,12 +43,12 @@
 			</button>
 		</div>
 		<div style="text-align: center;">
-			<span id='loading'><img src="" width="" height="" alt="loading"></span>
+			<span id="loading"><img src="" width="" height="" alt="loading"></span>
 		</div>
 
 
 
-		<div id='calendar'></div>
+		<div id="calendar"></div>
 
 
 
@@ -62,10 +61,10 @@
 		<link href="style.css" rel="stylesheet" type="text/css" />
 
 		<!-- FullCalendar Below-->
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/superhero/bootstrap.min.css" integrity="sha384-HnTY+mLT0stQlOwD3wcAzSVAZbrBp141qwfR4WfTqVQKSgmcgzk+oP0ieIyrxiFO" crossorigin="anonymous">
-		<!--
+		<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/superhero/bootstrap.min.css" integrity="sha384-HnTY+mLT0stQlOwD3wcAzSVAZbrBp141qwfR4WfTqVQKSgmcgzk+oP0ieIyrxiFO" crossorigin="anonymous"> -->
+<!-- darker stylesheet -->
 			<link href="bootstrap.css" rel="stylesheet" type="text/css" />
-		-->
+
 		<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.4.0/main.min.css" rel="stylesheet" type="text/css" />
 		<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.4.0/main.min.js"></script>
 

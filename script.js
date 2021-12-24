@@ -3,6 +3,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.title = config.documentTitle ? config.documentTitle : 'Stream Calendar';
 
+  if ( config.siteIconUrl ) {
+    let e = document.createElement( 'link' );
+    e.setAttribute( 'rel', 'icon' );
+    e.setAttribute( 'href', config.siteIconUrl );
+    document.head.appendChild( e );
+  }
+
   if ( config.alertHTML ) {
     let alert_content = document.getElementById('alert-content');
     alert_content.innerHTML = config.alertHTML;
@@ -54,11 +61,25 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // var initialTimeZone = 'UTC'; //local not working
-  let timeVar = {
-    hour: '2-digit',
-    minute: '2-digit',
-    meridiem: false,
-    hour12: false
+  const getEventTimeFormat = function() {
+    let is12Hour = (localStorage.getItem('hour12') === 'flag');
+    return {
+      hour: is12Hour ? 'numeric' : '2-digit',
+      minute: '2-digit',
+      meridiem: is12Hour,
+      hour12: is12Hour
+    };
+  };
+
+  const getSlotLabelFormat = function() {
+    let is12Hour = (localStorage.getItem('hour12') === 'flag');
+    return {
+      hour: is12Hour ? 'numeric' : '2-digit',
+      minute: '2-digit',
+      meridiem: is12Hour ? 'short' : false,
+      hour12: is12Hour,
+      omitZeroMinute: is12Hour
+    };
   };
 
   const getRandomIntInclusive = function(min, max) {
@@ -88,22 +109,27 @@ document.addEventListener('DOMContentLoaded', function () {
     localStorage.setItem( "calendarsHidden", JSON.stringify( calendarsHidden ) );
   };
   
-  let eventObjs = [];
-  for (var i = 0; i < calendarSets.length; i++){
-    let setName = calendarSets[i].uid;
-    let setEventObjs = calendarSets[i].eventObjs;
-    if (isCalendarShown(setName)){
-      eventObjs.push(...setEventObjs);
+  const getEventSources = function () {
+    let eventObjs = [];
+    for (var i = 0; i < calendarSets.length; i++){
+      let setName = calendarSets[i].uid;
+      let alwaysShown = calendarSets[i].hideToggleButton ? true : false;
+      let setEventObjs = calendarSets[i].eventObjs;
+      if (alwaysShown || isCalendarShown(setName)){
+        eventObjs.push(...setEventObjs);
+      }
     }
-  }
+    return eventObjs;
+  };
 
-  localStorage.setItem("loadonce", "false");
   var timeZoneSelectorEl = document.getElementById('time-zone-selector');
   var loadingEl = document.getElementById('loading');
   var calendarEl = document.getElementById('calendar');
   var calendar = new FullCalendar.Calendar(calendarEl, {
+    displayEventEnd: false,
     themeSystem: "bootstrap",
     contentHeight: "auto",
+    firstDay : 1,
     initialView: 'listWeek',
     views:
     {
@@ -117,28 +143,22 @@ document.addEventListener('DOMContentLoaded', function () {
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
-      right: 'listWeek,timeGridWeek' //listWeek,timeGridWeek,timeGridDay,
+      right: 'listWeek,timeGridWeek,timeGridDay' //listWeek,timeGridWeek,timeGridDay,
     },
     navLinks: true, // can click day/week names to navigate views
     editable: false,
     selectable: false,
     nowIndicator: true,
-    eventTimeFormat: timeVar,
+    eventTimeFormat: getEventTimeFormat(),
+    slotLabelFormat: getSlotLabelFormat(),
     expandRows: true,
     //lazyFetching: true,
-    slotDuration: "00:20:00",
+    slotDuration: "00:30:00",
     dayMaxEvents: true,
-    eventSources: [
-      ...eventObjs
-    ],
-    eventDidMount: function (info, element) {
+    eventSources: getEventSources(),
+    eventDidMount: function (info) {
       //console.log(info);
       //i got stuff todo here. chotto matte
-      if (localStorage.getItem("hour12") == "flag") {
-        //eventTimeFormat: 
-        //console.log(calendar.getOption('eventTimeFormat'))
-        calendar.setOption('eventTimeFormat', { hour: 'numeric', minute: '2-digit' })
-      }
       if (info.view.type == "listWeek") {
         var imgCell = info.el.insertCell(0);
         var ic = document.createElement('img');
@@ -185,8 +205,17 @@ document.addEventListener('DOMContentLoaded', function () {
           var etaText = document.createTextNode(h + "h" + m + "m to go!");
           eta.appendChild(etaText);
         }
+        else if (timeTo > -3600000){
+          var btext = document.createTextNode("Started in the last hour");
+          eta.appendChild(btext);
+        }
+        else if(timeTo > -7200000)
+        {
+          var btext = document.createTextNode("Started ~2 hours ago");
+          eta.appendChild(btext);
+        }
         else {
-          var btext = document.createTextNode("missed it!");
+          var btext = document.createTextNode("Missed it!");
           eta.appendChild(btext);
         }
         button2.onclick = function () {
@@ -202,13 +231,21 @@ document.addEventListener('DOMContentLoaded', function () {
         };
       }
     },
+    eventContent : function (event) {
+      let flag = /\p{Extended_Pictographic}/u.test(event.event._def.title);
+      if(!flag) {
+        event.event._def.title = event.event.source.internalEventSource.extendedProps.extendedProps.icon + event.event._def.title;
+      }
+    },
     eventClick: function (info) {
       //	console.log(info);
       if (info.view.type == "listWeek") {
         info.jsEvent.preventDefault(); //preventing opening Google Calendar
+        //console.log(info.el);
       }
-      if (info.view.type == "timeGridWeek") {
-        info.el.style.borderColor = 'red';
+      if (info.view.type == "timeGridWeek" || info.view.type === "timeGridDay") {
+        info.jsEvent.preventDefault();
+        info.el.style.borderColor = 'black';
         if (info.event._def.extendedProps.location === null || typeof info.event._def.extendedProps.location === 'undefined') {
           window.open(info.event.source.internalEventSource.extendedProps.extendedProps.url);
         }
@@ -218,12 +255,11 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     },
     viewWillUnmount: function () {
-      localStorage.setItem("loadonce", "false");
+
     },
     dayHeaderDidMount: function (arg) { //i am terrible fml
-      if (arg.view.type === 'listWeek' && localStorage.getItem("loadonce") == "false") {
-        localStorage.setItem("loadonce", "true");
-        var tableHeader = $(".fc-list-day");
+      if (arg.view.type === 'listWeek' ) {
+        var tableHeader = arg.el;
         var defaultColumns = 3; //default, including the reference dot
         var extraColumnHeaders = ['Topic', 'ETA(local)', 'Stream'];
         //columns I need
@@ -238,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     },
     dayHeaderWillUnmount: function (arg) {
-      localStorage.setItem("loadonce", "false");
+      
     },
     loading: function (bool) {
       if (bool && config.loadingImages && config.loadingImages.length){
@@ -255,11 +291,27 @@ document.addEventListener('DOMContentLoaded', function () {
     },
   });
 
-  const reloadCalendar = function(){
-    window.location.reload(); // TODO: replace with just calendar reload
+  const reloadCalendarEvents = function() {
+    // Clear all existing event sources
+    let oldEventSources = calendar.getEventSources();
+    for (let i=0; i<oldEventSources.length; i++){
+      oldEventSources[i].remove();
+    }
+
+    // Regenerate the list of event sources and re-add them
+    let newEventSources = getEventSources();
+    for (let i=0; i<newEventSources.length; i++){
+      calendar.addEventSource(newEventSources[i]);
+    }
   };
 
-  const renderConfigButtons = function(){
+  const reloadCalendarTimeFormat = function () {
+    // Regenerate the eventTimeFormat and slotLabelFormat options
+    calendar.setOption('eventTimeFormat', getEventTimeFormat());
+    calendar.setOption('slotLabelFormat', getSlotLabelFormat());
+  };
+
+  const renderConfigButtons = function() {
     // Set name for 12/24 hr button
     if (localStorage.getItem("hour12") == "flag") {
       $("#12hr").html("Switch to 24hr");
@@ -272,6 +324,8 @@ document.addEventListener('DOMContentLoaded', function () {
     toggleButtonsArea.innerHTML = '';
     if (calendarSets.length > 1) { // only show toggle buttons if at least 2 calendar sets
       for (let i=0; i<calendarSets.length; i++){
+        if (calendarSets[i].hideToggleButton) continue; // skip this button if it is marked as hidden
+
         let setName = calendarSets[i].uid;
         let displayName = calendarSets[i].displayName;
         let setEventObjs = calendarSets[i].eventObjs;
@@ -293,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function () {
         $("#" + buttonId).click(function () {
           if (isCalendarShown(setName)) {
             setCalendarShown(setName, false);
-            reloadCalendar();
+            reloadCalendarEvents();
           }
           else{
             setCalendarShown(setName, true);
@@ -317,14 +371,15 @@ document.addEventListener('DOMContentLoaded', function () {
       localStorage.setItem("hour12", "flag");
     }
     renderConfigButtons();
-    reloadCalendar();
+    reloadCalendarTimeFormat();
   });
 
   $("#clrs").click(function () {
     localStorage.removeItem("hour12");
     localStorage.removeItem("calendarsHidden");
     renderConfigButtons();
-    reloadCalendar();
+    reloadCalendarEvents();
+    reloadCalendarTimeFormat();
   });
 
   renderConfigButtons();
@@ -361,5 +416,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }`;
     document.body.appendChild(sheet);
   }
-  
+
+  if (window.matchMedia("(orientation: portrait)").matches) {
+    calendar.setOption('slotDuration', "00:15:00");
+  }
 });
