@@ -48,7 +48,10 @@ The `calendarSets` takes in "objects" as an input, which can be set up in this f
 
 **Since this step is a major hinderance to any non-technical streamer setting this up by themselves, I am looking to simplify this step, by making an HTML form which would generate this entire config.js**
 
-Step 3: Assuming that the Config parameters are set up, the config.js will be compatible with the rest of the codebase to feature as a personalized Stream Calendar
+Step 3: Adding Meta tags for link previews and search engine optimization (optional)
+File `index.html` can be edited to add meta tags which can be useful for link previews on sites like Twitter/Facebook and for search engine optimization on sites like Google. The `<meta>` tags marked as optional in that file can be uncommented and customized. (Please do not modify the redirect `<meta>` tag or the index page will not properly redirect to the calendar page)
+
+Step 4: Assuming that the Config parameters are set up, the config.js will be compatible with the rest of the codebase to feature as a personalized Stream Calendar
 The step here, would be for deployment to a host of your choice. 
 There are multiple choices, like Heroku/Netlify/Vercel (which I used) for setting this up.
 
