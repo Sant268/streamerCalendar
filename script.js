@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var config = STREAM_CALENDAR_CONFIG; // load global variable set by config.js
 
   document.title = config.documentTitle ? config.documentTitle : 'Stream Calendar';
-
+  
   if ( config.siteIconUrl ) {
     let e = document.createElement( 'link' );
     e.setAttribute( 'rel', 'icon' );
@@ -165,6 +165,8 @@ document.addEventListener('DOMContentLoaded', function () {
     expandRows: true,
     //lazyFetching: true,
     slotDuration: "00:30:00",
+    // events should not show up on two different days unless it goes at least 9 hours into the second day
+    nextDayThreshold: '09:00:00',  
     dayMaxEvents: true,
     eventSources: getEventSources(),
     eventDidMount: function (info) {
