@@ -179,38 +179,69 @@ document.addEventListener('DOMContentLoaded', function () {
         ic.src = info.event.source.internalEventSource.extendedProps.extendedProps.img;
         imgCell.appendChild(ic);
         var button = document.createElement("button");
-        // button.innerText = "Click!"
-
-        var button2 = document.createElement("button");
         button.setAttribute("class", "btn btn-sm");
-        var url = info.event._def.extendedProps.location;
 
-        var formtoggle = false;
-        if (info.event._def.extendedProps.description !== null && typeof info.event._def.extendedProps.description !== 'undefined') {
-          formtoggle = true;
-          var form = info.event._def.extendedProps.description;
-          var button2 = document.createElement("button");
-          button2.setAttribute("class", "btn btn-sm btn-dark");
-          button2.innerHTML = `<i class="fa fa-pencil-square" aria-hidden="true"></i>`;
+        var url = info.event._def.extendedProps.location; //location has link for the stream. mayybe IFTTT or volunteers
+        if ( !url ) {
+          // If no URL for the event, fall back to the calendar-level default URL
+          url = info.event.source.internalEventSource.extendedProps.extendedProps.url; 
         }
+        var formUrl = info.event._def.extendedProps.description;
+
+        if( url && url.indexOf('//') < 0 ) {
+          url = 'https://' + url;
+        }
+
+        if( formUrl && formUrl.indexOf('//') < 0 ) {
+          formUrl = 'https://' + formUrl;
+        }
+
+        /* if (url) {
+          button.title = url;
+        } */
 
         if (url && url.includes("twitch.tv")) {
-          button.classList.add("twitch")
+          button.classList.add("twitch");
           button.innerHTML = `<i class="fa fa-twitch" aria-hidden="true"></i>`;
         }
-        else {
-          button.classList.add("btn-danger")
+        else if (url && url.includes("twitter.com")) {
+          button.classList.add("twitter");
+          button.innerHTML = `<i class="fa fa-twitter" aria-hidden="true"></i>`;
+        }
+        else if (url && ( url.includes("youtube.com") || url.includes("youtu.be") )) {
+          button.classList.add("btn-danger");
           button.innerHTML = `<i class="fa fa-youtube-play" aria-hidden="true"></i>`;
+        }
+        else {
+          button.classList.add("btn-secondary");
+          button.innerHTML = `<i class="fa fa-external-link" aria-hidden="true"></i>`;
         }
 
         var tstr = Date.parse(info.event.startStr);
         var timeTo = tstr - Date.now();
         var eta = info.el.insertCell(4);
         var linkCell = info.el.insertCell(5);
-        linkCell.appendChild(button);
-        if (formtoggle) {
-          linkCell.appendChild(button2);
+        
+        // Add button for link
+        if ( url ) {
+          linkCell.appendChild(button);
+          button.onclick = function () {
+            window.open( url ); 
+          };
         }
+        
+        // Add second button for form
+        if ( formUrl ) {
+          var button2 = document.createElement("button");
+          button2.setAttribute("class", "btn btn-sm btn-dark");
+          button2.innerHTML = `<i class="fa fa-pencil-square" aria-hidden="true"></i>`;
+          // button2.title = formUrl;
+          linkCell.appendChild( button2 );
+          button2.onclick = function () {
+            window.open( formUrl );
+          };
+        }
+
         if (timeTo > 0) {
           var hours = (timeTo / (1000 * 60 * 60)).toFixed(1);
           var h = parseInt(hours)
@@ -231,17 +262,6 @@ document.addEventListener('DOMContentLoaded', function () {
           var btext = document.createTextNode("Missed it!");
           eta.appendChild(btext);
         }
-        button2.onclick = function () {
-          window.open(info.event._def.extendedProps.description)
-        }
-        button.onclick = function () {
-          if (info.event._def.extendedProps.location === null || typeof info.event._def.extendedProps.location === 'undefined') {
-            window.open(info.event.source.internalEventSource.extendedProps.extendedProps.url);
-          }
-          else {
-            window.open(info.event._def.extendedProps.location); //location has link for the stream. mayybe IFTTT or volunteers
-          }
-        };
       }
     },
     eventContent : function (event) {
@@ -259,11 +279,16 @@ document.addEventListener('DOMContentLoaded', function () {
       if (info.view.type == "timeGridWeek" || info.view.type === "timeGridDay") {
         info.jsEvent.preventDefault();
         info.el.style.borderColor = 'black';
-        if (info.event._def.extendedProps.location === null || typeof info.event._def.extendedProps.location === 'undefined') {
-          window.open(info.event.source.internalEventSource.extendedProps.extendedProps.url);
+        var url = info.event._def.extendedProps.location; //location has link for the stream. mayybe IFTTT or volunteers
+        if ( !url ) {
+          // If no URL for the event, fall back to the calendar-level default URL
+          url = info.event.source.internalEventSource.extendedProps.extendedProps.url; 
         }
-        else {
-          window.open(info.event._def.extendedProps.location); //location has link for the stream. mayybe IFTTT or volunteers
+        if ( url ) {
+          if( url.indexOf('//') < 0 ) {
+            url = 'https://' + url;
+          } 
+          window.open( url );
         }
       }
     },
