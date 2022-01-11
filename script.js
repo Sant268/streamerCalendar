@@ -229,6 +229,10 @@ document.addEventListener('DOMContentLoaded', function () {
             window.open( url ); 
           };
         }
+
+        if ( url && formUrl ) {
+          linkCell.appendChild( document.createTextNode(' ') );
+        }
         
         // Add second button for form
         if ( formUrl ) {
