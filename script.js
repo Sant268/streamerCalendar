@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function () {
           button.classList.add("twitch");
           button.innerHTML = `<i class="fa fa-twitch" aria-hidden="true"></i>`;
         }
-        else if (url && url.includes("twitter.com")) {
+        else if (url && ( url.includes("twitter.com") || url.includes("/x.com") )) {
           button.classList.add("twitter");
           button.innerHTML = `<i class="fa fa-twitter" aria-hidden="true"></i>`;
         }
