@@ -6,6 +6,12 @@ const STREAM_CALENDAR_CONFIG = {
   //footer fulfills the attribution, but can be removed. 
   "daysToShow": 7,
   "useAlternateButtonStyle": false,
+  "customStyles": {
+    "button": {
+      "color": ""
+    }
+  },
+  "customCursorUrl": "",
   "enableGoogleTranslate": true,
   "googleAnalyticsId": "",
   "googleCalendarApiKey": "",

@@ -456,13 +456,36 @@ document.addEventListener('DOMContentLoaded', function () {
     calendar.setOption('timeZone', this.value);
   });
 
+  var cssOverride = '';
+
   // override style of btn-primary based on config
   if (config.useAlternateButtonStyle === true){
-    var sheet = document.createElement('style');
-    sheet.innerHTML = `.btn-primary {
+    cssOverride += `\n.btn-primary {
       background-color: #648181 !important; 
       border-color: #7DB7AB !important;
     }`;
+  }
+  if (config.customStyles && config.customStyles.button && config.customStyles.button.color) {
+    cssOverride += `\n.btn-primary {
+      color: ${config.customStyles.button.color} !important;
+    }`;
+  }
+
+  // apply custom or default cursor based on config
+  if (config.customCursorUrl) {
+    cssOverride += `\nbody, a, fc-list-event, .fc-list-event-title a, td {
+      cursor: url('./${config.customCursorUrl}'), auto !important;
+    }`;
+  } else {
+    cssOverride += `\n.fc-list-event, .fc-list-event-title a{
+      cursor: default !important;
+    }`;
+  }
+
+  // apply CSS overrides 
+  if (cssOverride) {
+    var sheet = document.createElement('style');
+    sheet.innerHTML = cssOverride;
     document.body.appendChild(sheet);
   }
 

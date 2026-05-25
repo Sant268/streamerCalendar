@@ -27,7 +27,6 @@ tr:hover td {
 }
 /* Made so the list event line wouldn't highlight the link, just the button */
 .fc-list-event, .fc-list-event-title a{
-  cursor: default !important;
   text-decoration: none !important;
 }
 
