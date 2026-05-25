@@ -26,7 +26,7 @@ The above link also mentions how you can set up the Google Calendar yourself, wh
 Step 2: Adding the Calendars to config.js
 The `calendarSets` takes in "objects" as an input, which can be set up in this fashion:
 
-    
+```
     {
       "uid": "unique name,say the streamer name",
       "displayName": "For internal purposes only",
@@ -45,13 +45,32 @@ The `calendarSets` takes in "objects" as an input, which can be set up in this f
         {
 		        /* similar object but for another type of event */
 	     }]};
+```
 
 **Since this step is a major hinderance to any non-technical streamer setting this up by themselves, I am looking to simplify this step, by making an HTML form which would generate this entire config.js**
 
 Step 3: Adding Meta tags for link previews and search engine optimization (optional)
+
 File `index.html` can be edited to add meta tags which can be useful for link previews on sites like Twitter/Facebook and for search engine optimization on sites like Google. The `<meta>` tags marked as optional in that file can be uncommented and customized. (Please do not modify the redirect `<meta>` tag or the index page will not properly redirect to the calendar page)
 
-Step 4: Assuming that the Config parameters are set up, the config.js will be compatible with the rest of the codebase to feature as a personalized Stream Calendar
+Step 4: Add custom CSS for specific calendars (optional)
+
+In file `customStyles.css`, you can define custom CSS for the classes that were defined in the `classNames` section of `calendarSets`.
+
+For example, if you had a calendar entry in `calendarSets` like the following:
+`"classNames": "mori",`
+
+Then you could add a block of custom CSS like the following, which would change the text color:
+```
+.mori {
+  color:#deadbe !important;
+}
+```
+
+The custom CSS will be applied in the list view to all rows coming from that particular calendar.
+It will not be applied to list view rows from other calendars, nor will it be applied to day/week views.
+
+Step 5: Assuming that the Config parameters are set up, the config.js will be compatible with the rest of the codebase to feature as a personalized Stream Calendar
 The step here, would be for deployment to a host of your choice. 
 There are multiple choices, like Heroku/Netlify/Vercel (which I used) for setting this up.
 
