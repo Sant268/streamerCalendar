@@ -18,12 +18,15 @@ In it's current scuffed form, it uses:
 ## Manual Config steps
 
 **How to set this whole Project up on your own:**
-Step 1: Grab an API Key for Google Calendar API, and the Calendar Keys
+
+### Step 1: Grab an API Key for Google Calendar API, and the Calendar Keys
+
 For this step, I'll recommend following the tutorial [here](https://fullcalendar.io/docs/google-calendar), in the FullCalendar Docs. The API Key you receive should be pasted in the `googleCalendarApiKey` field provided in config.js
 
 The above link also mentions how you can set up the Google Calendar yourself, which will come in handy for:
 
-Step 2: Adding the Calendars to config.js
+### Step 2: Adding the Calendars to config.js
+
 The `calendarSets` takes in "objects" as an input, which can be set up in this fashion:
 
 ```
@@ -49,11 +52,11 @@ The `calendarSets` takes in "objects" as an input, which can be set up in this f
 
 **Since this step is a major hinderance to any non-technical streamer setting this up by themselves, I am looking to simplify this step, by making an HTML form which would generate this entire config.js**
 
-Step 3: Adding Meta tags for link previews and search engine optimization (optional)
+### Step 3: Adding Meta tags for link previews and search engine optimization (optional)
 
 File `index.html` can be edited to add meta tags which can be useful for link previews on sites like Twitter/Facebook and for search engine optimization on sites like Google. The `<meta>` tags marked as optional in that file can be uncommented and customized. (Please do not modify the redirect `<meta>` tag or the index page will not properly redirect to the calendar page)
 
-Step 4: Add custom CSS for specific calendars (optional)
+### Step 4: Add custom CSS for specific calendars (optional)
 
 In file `customStyles.css`, you can define custom CSS for the classes that were defined in the `classNames` section of `calendarSets`.
 
@@ -70,8 +73,12 @@ Then you could add a block of custom CSS like the following, which would change 
 The custom CSS will be applied in the list view to all rows coming from that particular calendar.
 It will not be applied to list view rows from other calendars, nor will it be applied to day/week views.
 
-Step 5: Assuming that the Config parameters are set up, the config.js will be compatible with the rest of the codebase to feature as a personalized Stream Calendar
+### Step 5: Deployment
+
+Assuming that the Config parameters are set up, the config.js will be compatible with the rest of the codebase to feature as a personalized Stream Calendar
 The step here, would be for deployment to a host of your choice. 
 There are multiple choices, like Heroku/Netlify/Vercel (which I used) for setting this up.
+
+## Future Updates
 
 Future modifications which I am planning to add are to customize color schemes for the buttons, and make this process much more accessible
